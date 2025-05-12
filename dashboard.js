@@ -1,13 +1,13 @@
-// Simulated power data
-let powerData = [
-  { time: "10:00", voltage: 220, current: 0.5, power: 110 },
-  { time: "10:01", voltage: 222, current: 0.52, power: 115 },
-  { time: "10:02", voltage: 221, current: 0.55, power: 121 },
+// Static power data - single fixed point
+const powerData = [
+  { time: "10:00", voltage: 220, current: 0.5, power: 110 }
 ];
-let totalEnergy = 0;
+
+// Fixed energy calculation based on the static data
+const totalEnergy = 0.3285;
 
 // Initialize all charts
-let charts = {
+const charts = {
   powerChart: null,
   consumptionChart: null,
   correlationChart: null,
@@ -17,6 +17,7 @@ let charts = {
 function initCharts() {
   const chartOptions = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         labels: { color: '#f5f5f5' }
@@ -24,15 +25,17 @@ function initCharts() {
     },
     scales: {
       x: {
-        ticks: { color: '#ccc' }
+        ticks: { color: '#ccc' },
+        grid: { color: 'rgba(255,255,255,0.1)' }
       },
       y: {
-        ticks: { color: '#ccc' }
+        ticks: { color: '#ccc' },
+        grid: { color: 'rgba(255,255,255,0.1)' }
       }
     }
   };
 
-  // Real-time power chart
+  // Real-time power chart (static with one point)
   charts.powerChart = new Chart(
     document.getElementById("powerChart").getContext("2d"),
     {
@@ -42,35 +45,43 @@ function initCharts() {
         datasets: [
           {
             label: 'Voltage (V)',
-            data: powerData.map(d => d.voltage),
+            data: [powerData[0].voltage],
             borderColor: '#f39c12',
             backgroundColor: '#f39c1222',
             fill: true,
-            tension: 0.4
+            tension: 0.4,
+            borderWidth: 2
           },
           {
             label: 'Current (A)',
-            data: powerData.map(d => d.current),
+            data: [powerData[0].current],
             borderColor: '#1abc9c',
             backgroundColor: '#1abc9c22',
             fill: true,
-            tension: 0.4
+            tension: 0.4,
+            borderWidth: 2
           },
           {
             label: 'Power (W)',
-            data: powerData.map(d => d.power),
+            data: [powerData[0].power],
             borderColor: '#e74c3c',
             backgroundColor: '#e74c3c22',
             fill: true,
-            tension: 0.4
+            tension: 0.4,
+            borderWidth: 2
           }
         ]
       },
-      options: chartOptions
+      options: {
+        ...chartOptions,
+        animation: {
+          duration: 2000 // Smooth initial animation
+        }
+      }
     }
   );
 
-  // Consumption history chart
+  // Consumption history chart (static with one point)
   charts.consumptionChart = new Chart(
     document.getElementById("consumptionChart").getContext("2d"),
     {
@@ -78,18 +89,23 @@ function initCharts() {
       data: {
         labels: powerData.map(d => d.time),
         datasets: [{
-          label: 'Power (W)',
-          data: powerData.map(d => d.power),
-          backgroundColor: '#3498db',
+          label: 'Power Consumption (W)',
+          data: [powerData[0].power],
+          backgroundColor: '#3498db88',
           borderColor: '#2980b9',
           borderWidth: 1
         }]
       },
-      options: chartOptions
+      options: {
+        ...chartOptions,
+        animation: {
+          duration: 2000 // Smooth initial animation
+        }
+      }
     }
   );
 
-  // Correlation chart
+  // Correlation chart (static with one point)
   charts.correlationChart = new Chart(
     document.getElementById("correlationChart").getContext("2d"),
     {
@@ -97,14 +113,15 @@ function initCharts() {
       data: {
         datasets: [{
           label: 'Voltage vs Current',
-          data: powerData.map(d => ({
-            x: d.voltage,
-            y: d.current
-          })),
+          data: [{
+            x: powerData[0].voltage,
+            y: powerData[0].current
+          }],
           backgroundColor: '#9b59b6',
           borderColor: '#8e44ad',
           pointRadius: 6,
-          pointHoverRadius: 8
+          pointHoverRadius: 8,
+          borderWidth: 1
         }]
       },
       options: {
@@ -116,7 +133,8 @@ function initCharts() {
               text: 'Voltage (V)',
               color: '#ccc'
             },
-            ticks: { color: '#ccc' }
+            min: 215,
+            max: 225
           },
           y: {
             title: {
@@ -124,35 +142,35 @@ function initCharts() {
               text: 'Current (A)',
               color: '#ccc'
             },
-            ticks: { color: '#ccc' }
+            min: 0.45,
+            max: 0.6
           }
+        },
+        animation: {
+          duration: 2000 // Smooth initial animation
         }
       }
     }
   );
 
-  // Distribution chart
-  updateDistributionChart();
+  // Distribution chart (static with one point)
+  createDistributionChart();
 }
 
-function updateDistributionChart() {
+function createDistributionChart() {
   const ctx = document.getElementById("distributionChart").getContext("2d");
-  
-  if (charts.distributionChart) {
-    charts.distributionChart.destroy();
-  }
 
   // Calculate average values
-  const avgVoltage = powerData.reduce((sum, d) => sum + d.voltage, 0) / powerData.length;
-  const avgCurrent = powerData.reduce((sum, d) => sum + d.current, 0) / powerData.length;
-  const avgPower = powerData.reduce((sum, d) => sum + d.power, 0) / powerData.length;
+  const avgVoltage = powerData[0].voltage;
+  const avgCurrent = powerData[0].current;
+  const avgPower = powerData[0].power;
 
   charts.distributionChart = new Chart(ctx, {
     type: 'doughnut',
     data: {
       labels: ['Voltage', 'Current', 'Power'],
       datasets: [{
-        data: [avgVoltage, avgCurrent * 100, avgPower], // Scale current for better visualization
+        data: [avgVoltage, avgCurrent * 100, avgPower],
         backgroundColor: [
           '#f39c12',
           '#1abc9c',
@@ -168,9 +186,16 @@ function updateDistributionChart() {
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
       plugins: {
         legend: {
-          labels: { color: '#f5f5f5' }
+          position: 'right',
+          labels: { 
+            color: '#f5f5f5',
+            font: {
+              size: 12
+            }
+          }
         },
         tooltip: {
           callbacks: {
@@ -188,97 +213,37 @@ function updateDistributionChart() {
             }
           }
         }
+      },
+      animation: {
+        animateScale: true,
+        animateRotate: true
       }
     }
   });
 }
 
 function updateCards() {
-  const latest = powerData[powerData.length - 1];
+  const latest = powerData[0];
   document.getElementById("voltage").textContent = latest.voltage.toFixed(1);
   document.getElementById("current").textContent = latest.current.toFixed(2);
   document.getElementById("power").textContent = latest.power.toFixed(1);
-  
-  // Calculate energy (kWh) - assuming 2 second intervals
-  totalEnergy += latest.power * (2 / 3600);
   document.getElementById("energy").textContent = totalEnergy.toFixed(4);
 }
 
-function addDataPoint(time, voltage, current) {
-  const power = voltage * current;
-  const newPoint = { time, voltage, current, power };
-
-  // Update the powerData array
-  powerData.push(newPoint);
-  if (powerData.length > 20) powerData.shift(); // Keep last 20 points
-
-  // Update all charts
-  charts.powerChart.data.labels = powerData.map(d => d.time);
-  charts.powerChart.data.datasets[0].data = powerData.map(d => d.voltage);
-  charts.powerChart.data.datasets[1].data = powerData.map(d => d.current);
-  charts.powerChart.data.datasets[2].data = powerData.map(d => d.power);
-  charts.powerChart.update();
-
-  charts.consumptionChart.data.labels = powerData.map(d => d.time);
-  charts.consumptionChart.data.datasets[0].data = powerData.map(d => d.power);
-  charts.consumptionChart.update();
-
-  charts.correlationChart.data.datasets[0].data = powerData.map(d => ({
-    x: d.voltage,
-    y: d.current
-  }));
-  charts.correlationChart.update();
-
-  updateDistributionChart();
-  updateCards();
-}
-
-// Initialize everything
-initCharts();
-updateCards();
-
-// 🔧 Generate random serial number
-function generateRandomSerial() {
-  const hex = Math.floor(Math.random() * 0xFFFFFF).toString(16).toUpperCase();
-  return "ESP-" + hex.padStart(6, "0");
-}
-
-// 🌐 Get public IP address
 function displaySystemInfo() {
-  const serial = generateRandomSerial();
-  document.getElementById("serial-number").textContent = serial;
-
-  fetch("https://api.ipify.org?format=json")
-    .then(response => response.json())
-    .then(data => {
-      document.getElementById("ip-address").textContent = data.ip;
-    })
-    .catch(() => {
-      document.getElementById("ip-address").textContent = "Unavailable";
-    });
+  document.getElementById("serial-number").textContent = "ESP-ACME01";
+  document.getElementById("ip-address").textContent = "192.168.1.100";
+  document.getElementById("firmware-version").textContent = "v2.4.1";
+  document.getElementById("uptime").textContent = "5 days, 12:34:56";
 }
 
-displaySystemInfo();
+// Initialize everything when the page loads
+window.addEventListener('DOMContentLoaded', () => {
+  initCharts();
+  updateCards();
+  displaySystemInfo();
+});
 
-// Simulate data updates
-setInterval(() => {
-  const now = new Date();
-  const time = now.getHours().toString().padStart(2, '0') + ":" +
-               now.getMinutes().toString().padStart(2, '0') + ":" +
-               now.getSeconds().toString().padStart(2, '0');
-
-  const voltage = 215 + Math.random() * 10; // e.g., 215V–225V
-  const current = 0.4 + Math.random() * 0.3; // e.g., 0.4A–0.7A
-
-  addDataPoint(time, voltage, current);
-}, 1000);
-
-
-
-
-
-
-  function goHome() {
-    // Redirect to the home page
-    window.location.href = 'index.html';
-  }
+function goHome() {
+  window.location.href = 'index.html';
+}
