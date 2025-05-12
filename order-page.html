@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Form with Estimated Delivery Time</title>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
+  <style>
+    .order-container {
+      max-width: 600px;
+      margin: 40px auto;
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 25px rgba(0, 119, 182, 0.1);
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .order-container h2 {
+      text-align: center;
+      color: #0077b6;
+      margin-bottom: 20px;
+    }
+
+    .order-container label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+      color: #0077b6;
+    }
+
+    .order-container input,
+    .order-container textarea,
+    .order-container select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      margin-top: 5px;
+    }
+
+    .order-container button {
+      background-color: #0077b6;
+      color: white;
+      padding: 12px 25px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 20px;
+      width: 100%;
+    }
+
+    .order-container button:hover {
+      background-color: #005f8d;
+    }
+
+    .message {
+      margin-top: 15px;
+      font-weight: bold;
+      color: #004c6d;
+    }
+
+    #international-shipping {
+      display: none;
+      font-weight: bold;
+      color: #004c6d;
+    }
+  </style>
+</head>
+<body>
+
+<div class="order-container">
+  <h2>Order the Prototype Part</h2>
+  <form action="https://formspree.io/f/xzzrvvzo" method="POST" onsubmit="return handleOrderSubmit()" id="order-form">
+    <label for="name">Full Name</label>
+    <input type="text" name="name" id="orderName" required />
+
+    <label for="email">Email Address</label>
+    <input type="email" name="email" id="orderEmail" required />
+
+    <label for="country">Country</label>
+    <select name="country" id="country" required onchange="updateGovernorates()">
+      <option value="">-- Select Country --</option>
+      <option value="Egypt">Egypt</option>
+      <option value="Other">Other</option>
+    </select>
+
+    <label for="governorate" id="governorate-label">Governorate</label>
+    <select name="governorate" id="governorate" required>
+      <option value="">-- Select Governorate --</option>
+    </select>
+
+    <span id="international-shipping" style="display: none; font-weight: bold; color: #004c6d;">International shipping estimated: 5–10 days.</span>
+
+    <label for="address">Shipping Address</label>
+    <textarea name="address" id="orderAddress" rows="3" required></textarea>
+
+    <label for="quantity">Quantity</label>
+    <input type="number" name="quantity" id="quantity" min="1" required />
+
+    <label for="notes">Additional Notes</label>
+    <textarea name="notes" id="notes" rows="3"></textarea>
+
+    <button type="submit">Submit Order</button>
+    <div class="message" id="form-message"></div>
+  </form>
+</div>
+
+<script>
+const governoratesByCountry = {
+  "Egypt": [
+    "Cairo",
+    "Giza",
+    "Alexandria",
+    "Aswan",
+    "Luxor",
+    "6th of October",
+    "Beni Suef",
+    "Dakahlia",
+    "Damietta",
+    "Faiyum",
+    "Gharbia",
+    "Ismailia",
+    "Kafr El Sheikh",
+    "Menoufia",
+    "Minya",
+    "Monufia",
+    "New Valley",
+    "North Sinai",
+    "Port Said",
+    "Qalyubia",
+    "Qena",
+    "Red Sea",
+    "Sharqia",
+    "Sohag",
+    "South Sinai",
+    "Suez"
+  ]
+};
+
+const governorateTimes = {
+  "Cairo": 1,
+  "Giza": 1,
+  "Alexandria": 2,
+  "Aswan": 3,
+  "Luxor": 3,
+  "6th of October": 1,
+  "Beni Suef": 2,
+  "Dakahlia": 2,
+  "Damietta": 3,
+  "Faiyum": 2,
+  "Gharbia": 2,
+  "Ismailia": 2,
+  "Kafr El Sheikh": 3,
+  "Menoufia": 2,
+  "Minya": 3,
+  "Monufia": 2,
+  "New Valley": 4,
+  "North Sinai": 4,
+  "Port Said": 2,
+  "Qalyubia": 2,
+  "Qena": 3,
+  "Red Sea": 3,
+  "Sharqia": 2,
+  "Sohag": 3,
+  "South Sinai": 3,
+  "Suez": 2
+};
+
+function updateGovernorates() {
+  const country = document.getElementById("country").value;
+  const governorateSelect = document.getElementById("governorate");
+  const govLabel = document.getElementById("governorate-label");
+  const intlShipping = document.getElementById("international-shipping");
+
+  // Clear previous options
+  governorateSelect.innerHTML = '<option value="">-- Select Governorate --</option>';
+
+  if (country === "Egypt") {
+    governorateSelect.style.display = "block";
+    govLabel.style.display = "block";
+    intlShipping.style.display = "none";
+
+    // Populate governorates
+    governoratesByCountry[country].forEach(gov => {
+      const option = document.createElement("option");
+      option.value = gov;
+      option.textContent = gov;
+      governorateSelect.appendChild(option);
+    });
+  } else {
+    // If not Egypt
+    governorateSelect.style.display = "none";
+    govLabel.style.display = "none";
+    intlShipping.style.display = "block";
+  }
+}
+
+function handleOrderSubmit() {
+  const country = document.getElementById("country").value;
+  const selectedGov = document.getElementById("governorate").value;
+  const message = document.getElementById("form-message");
+
+  let estimatedTime = 0;
+
+  if (country !== "Egypt") {
+    message.textContent = "🌍 International shipping estimated: 5–10 business days.";
+    estimatedTime = 10; // International shipping time
+  } else {
+    if (!selectedGov || !governorateTimes[selectedGov]) {
+      message.textContent = "Please select a valid Egyptian governorate.";
+      return false;
+    }
+
+    estimatedTime = governorateTimes[selectedGov];
+
+    const baseTime = governorateTimes["6th of October"];
+    const diff = estimatedTime - baseTime;
+
+    if (diff === 0) {
+      message.textContent = "✅ Estimated delivery time is the same as 6th of October (1 day).";
+    } else if (diff > 0) {
+      message.textContent = `🕒 Estimated delivery is ${estimatedTime} days, which is ${diff} day(s) longer than 6th of October.`;
+    } else {
+      message.textContent = `🚀 Estimated delivery is ${estimatedTime} days, which is ${-diff} day(s) faster than 6th of October!`;
+    }
+  }
+
+  // Save estimated time in localStorage
+  localStorage.setItem('estimatedDeliveryTime', estimatedTime);
+
+  // Confetti & redirect
+  confetti({
+    particleCount: 150,
+    spread: 70,
+    origin: { x: 0.5, y: 0.6 }
+  });
+
+  setTimeout(() => {
+    window.location.href = "./order-completed.html";
+  }, 2000);
+
+  return false;
+}
+</script>
+
+</body>
+</html>

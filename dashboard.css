@@ -1,0 +1,101 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  background-color: #121212;
+  color: #f5f5f5;
+}
+
+header {
+  background-color: #1e1e1e;
+  padding: 1rem;
+  text-align: center;
+  color: #00ccff;
+  border-bottom: 1px solid #333;
+}
+
+.device-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.info-box {
+  background: #1f1f1f;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #333;
+}
+
+.status.online {
+  background-color: #2ecc71;
+  color: #121212;
+  padding: 0.2rem 0.5rem;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.card {
+  background: #1f1f1f;
+  padding: 1.2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+  font-size: 1.2rem;
+  text-align: center;
+  border: 1px solid #333;
+}
+
+.chart-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.chart-container {
+  padding: 1rem;
+  background: #1f1f1f;
+  border-radius: 8px;
+  border: 1px solid #333;
+}
+
+canvas {
+  width: 100% !important;
+  height: 300px !important;
+}
+
+@media (max-width: 600px) {
+  header h1 {
+    font-size: 1.2rem;
+  }
+  
+  .chart-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+  .home-button {
+    background: #ffffff00;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 15px;
+    transition: background 0.3s;
+    text-align: center;
+    width: 100%;
+    border: 2px solid white;
+  }
+
+  .home-button:hover {
+    background: #ffffff;
+    color: black;
+  }

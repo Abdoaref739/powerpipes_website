@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Page</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #f1f1f1;
+    }
+
+    .payment-container {
+      max-width: 600px;
+      margin: 50px auto;
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 25px rgba(0, 119, 182, 0.2);
+      text-align: center;
+      position: relative;
+      z-index: 10;
+    }
+
+    .payment-container h2 {
+      color: #1e3a8a;
+      margin-bottom: 20px;
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    .payment-container p {
+      font-size: 1.1rem;
+      margin-top: 15px;
+    }
+
+    .payment-methods {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .payment-methods img {
+      width: 80px;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+
+    .payment-methods img:hover {
+      transform: scale(1.1);
+    }
+
+    .payment-form {
+      display: none;
+      margin-top: 20px;
+      text-align: left;
+    }
+
+    .payment-form input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+      margin-left: -10px;
+    }
+
+    .payment-form button {
+      background-color: #1e3a8a;
+      color: white;
+      padding: 12px 25px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.3s;
+    }
+
+    .payment-form button:hover {
+      background-color: #1c3d5b;
+    }
+
+    .error-message {
+      color: red;
+      font-size: 0.9rem;
+      margin-bottom: 15px;
+    }
+
+    /* Floating Balls Animation */
+    .ball {
+      position: absolute;
+      border-radius: 50%;
+      background-color: rgba(0, 119, 182, 0.6);
+      animation: float 10s linear infinite;
+    }
+
+    .ball:nth-child(1) {
+      width: 120px;
+      height: 120px;
+      top: 30%;
+      left: 10%;
+      animation-duration: 15s;
+      animation-delay: 0s;
+    }
+
+    .ball:nth-child(2) {
+      width: 90px;
+      height: 90px;
+      top: 50%;
+      left: 40%;
+      animation-duration: 13s;
+      animation-delay: 3s;
+    }
+
+    .ball:nth-child(3) {
+      width: 100px;
+      height: 100px;
+      top: 70%;
+      left: 60%;
+      animation-duration: 18s;
+      animation-delay: 5s;
+    }
+
+    .ball:nth-child(4) {
+      width: 110px;
+      height: 110px;
+      top: 20%;
+      left: 80%;
+      animation-duration: 17s;
+      animation-delay: 2s;
+    }
+
+    .ball:nth-child(5) {
+      width: 80px;
+      height: 80px;
+      top: 40%;
+      left: 70%;
+      animation-duration: 12s;
+      animation-delay: 4s;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(0) rotate(0deg);
+      }
+      50% {
+        transform: translateY(-100vh) rotate(180deg);
+      }
+      100% {
+        transform: translateY(0) rotate(360deg);
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Floating Balls -->
+<div class="ball"></div>
+<div class="ball"></div>
+<div class="ball"></div>
+<div class="ball"></div>
+<div class="ball"></div>
+
+<div class="payment-container">
+  <h2>Choose Your Payment Method</h2>
+
+  <div class="payment-methods">
+    <img src="./images/PayPal-Logo-PNG-Free-Image.png" alt="PayPal" title="Pay with PayPal" onclick="selectPaymentMethod('PayPal')">
+    <img src="./images/Stripe-Emblem.png" alt="Stripe" title="Pay with Stripe" onclick="selectPaymentMethod('Stripe')">
+    <img src="./images/mastercard-og-image.png" alt="MasterCard" title="Pay with MasterCard" onclick="selectPaymentMethod('MasterCard')">
+    <img src="./images/OIP (1).jpeg" alt="Visa" title="Pay with Visa" onclick="selectPaymentMethod('Visa')">
+  </div>
+
+  <div id="payment-form" class="payment-form">
+    <h3>Enter Card Details</h3>
+    <div class="error-message" id="error-message"></div>
+    <input type="text" id="card-name" placeholder="Cardholder's Name" required>
+    <input type="text" id="card-number" placeholder="Card Number" required>
+    <input type="text" id="expiry-date" placeholder="MM/YY" required>
+    <input type="text" id="cvv" placeholder="CVV" required>
+    <button onclick="handlePayment()">Proceed to Payment</button>
+  </div>
+</div>
+
+<script>
+  function selectPaymentMethod(method) {
+    // Show the payment form and adjust the heading based on the selected method
+    document.getElementById('payment-form').style.display = 'block';
+    document.getElementById('payment-form').querySelector('h3').textContent = `Enter ${method} Card Details`;
+
+    // Optionally, update a hidden field or make adjustments depending on the method
+    console.log(`Selected Payment Method: ${method}`);
+  }
+
+  // Handle the payment process
+  function handlePayment() {
+    const cardName = document.getElementById('card-name').value;
+    const cardNumber = document.getElementById('card-number').value;
+    const expiryDate = document.getElementById('expiry-date').value;
+    const cvv = document.getElementById('cvv').value;
+    const errorMessage = document.getElementById('error-message');
+    
+    // Clear previous error messages
+    errorMessage.textContent = '';
+
+    // Simple validation for card details (you can enhance this further)
+    if (!cardName || !cardNumber || !expiryDate || !cvv) {
+      errorMessage.textContent = "Please fill in all card details.";
+      return;
+    }
+
+    // Card Number validation (basic check for length)
+    if (!/^\d{16}$/.test(cardNumber)) {
+      errorMessage.textContent = "Please enter a valid 16-digit card number.";
+      return;
+    }
+
+    // Expiry Date validation (basic MM/YY format check)
+    if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(expiryDate)) {
+      errorMessage.textContent = "Please enter a valid expiry date (MM/YY).";
+      return;
+    }
+
+    // CVV validation (basic check for 3 digits)
+    if (!/^\d{3}$/.test(cvv)) {
+      errorMessage.textContent = "Please enter a valid 3-digit CVV.";
+      return;
+    }
+window.location.href = "./order-completed.html";
+  }
+</script>
+
+</body>
+</html>

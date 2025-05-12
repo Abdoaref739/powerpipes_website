@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ESP Power Dashboard</title>
+  <link rel="stylesheet" href="dashboard.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header>
+    <h1>⚡ ESP Power Monitoring Dashboard</h1>
+  </header>
+  <button class="home-button" id="goHomeBtn" onclick="goHome()">Go to Home Page</button>
+  <section class="device-info">
+    <div class="info-box"><strong>Name:</strong> <span id="device-name">PowerESP</span></div>
+    <div class="info-box"><strong>Serial No:</strong> <span id="serial-number">ESP-PWR-001</span></div>
+    <div class="info-box"><strong>Status:</strong> <span class="status online">Connected</span></div>
+    <div class="info-box"><strong>IP Address:</strong> <span id="ip-address">192.168.1.100</span></div>
+  </section>
+
+  <section class="cards">
+    <div class="card" id="voltage-card">🔋 Voltage: <span id="voltage">--</span> V</div>
+    <div class="card" id="current-card">🔌 Current: <span id="current">--</span> A</div>
+    <div class="card" id="power-card">⚙️ Power: <span id="power">--</span> W</div>
+    <div class="card" id="energy-card">🔋 Energy: <span id="energy">--</span> kWh</div>
+  </section>
+
+  <div class="chart-grid">
+    <section class="chart-container">
+      <h2>📊 Real-Time Power Data</h2>
+      <canvas id="powerChart"></canvas>
+    </section>
+
+    <section class="chart-container">
+      <h2>📈 Power Consumption History</h2>
+      <canvas id="consumptionChart"></canvas>
+    </section>
+
+    <section class="chart-container">
+      <h2>✖️ Voltage-Current Correlation</h2>
+      <canvas id="correlationChart"></canvas>
+    </section>
+
+    <section class="chart-container" id="pie-chart">
+      <h2>🍰 Power Distribution</h2>
+      <canvas id="distributionChart"></canvas>
+    </section>
+  </div>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>
